@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>MDIA 2294</title>
+
+	<style>
+		img {
+			margin: 5px;
+
+		}
+
+		/* Image.clickable [opacity: 0.25; }: Targets <img> elements with the class clickable. These images are semi-transparent (opacity of 0.25), indicating that they aren't active or selected. */
+
+		img.clickable {
+			opacity: 0.25;
+		}
+
+		/* .clickable.selected-thumbnail { opacity: 1 ]: This class is used to make images fully opaque (fully visible) when they have both the clickable and selected-thumbnail classes. A thumbnail image is highlighted when this button is clicked. */
+
+		.clickable.selected-thumbnail {
+			opacity: 1;
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<!-- Fatma Dikyar - A01355598 -->
+
+	<h1>MDIA 2294: Assignment 2</h1>
+
+	<div style="text-align:center;">
+		<table>
+			<tr>
+				<td></td>
+				<td style="text-align:center;">
+					<div><img id="main-image" alt="Main Image" /></div>
+				</td>
+				<td></td>
+
+			</tr>
+			<tr>
+				<td>
+					<img src="images/first.png" id="first-btn" onclick="set_nav_first()" />
+					<img src="images/prev.png" id="prev-btn" onclick="set_nav_prev()" />
+				</td>
+				<td>
+					<div id="thumbnail-area"></div>
+				</td>
+				<td>
+					<img src="images/next.png" id="next-btn" onclick="set_nav_next()" />
+					<img src="images/last.png" id="prev-btn" onclick="set_nav_last()" />
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<script>
+
+		// By setting current_index to 0, you can keep track of which image is currently displayed. As the array index starts at 0, the first image in the array is displayed by default.
+
+
+		let current_index = 0;
+
+		// These are what you'll use to display your pictures. Thumbnail and full-size image file paths are dynamically generated using these names.
+
+		const image_root_names = ["berne", "cavapoo", "golden", "maltipoo", "poodle"];
+
+		// As soon as the webpage loads, this function is called. As a first step, it sets up the image gallery as follows:
+		// The first image becomes the main image through set_main_image(0).
+		// In order to populate the thumbnail area, call set_thumbnails().
+
+		const first_load = () => {
+
+			set_main_image(0);
+			set_thumbnails();
+
+		}
+
+		// Displays the image corresponding to the index provided in the source (src) attribute of the main image (#main-image). 
+		// Using the image_root_names array, the file path is constructed by appending "Full.jpg" to the selected root name.
+		// It keeps track of the currently displayed main image by updating current_index.
+		// The thumbnail that is selected is visually indicated by the call to update_thumbnails(index).
+
+		const set_main_image = (index) => {
+
+			document.querySelector("#main-image").src = "images/" + image_root_names[index] + "Full.jpg";
+
+			current_index = index;
+
+			update_thumbnails(index);
+		}
+
+		// By using forEach(), iterates over image_root_names, creating an img element for each entry. Thumbnails are created through this process.
+		// Each root name is appended with "Thumb.jpg" as the src attribute.
+		// All thumbnails are given the clickable class. It also applies the selected-thumbnail class to thumbnails that correspond to the currently displayed main image.
+		// Each thumbnail is added with a click event listener. As soon as a thumbnail is clicked, the main display is updated by calling set_main_image(array_index).
+
+		const set_thumbnails = () => {
+
+			image_root_names.forEach((dogs, array_index) => {
+
+				const new_thumb = document.createElement("img");
+
+				new_thumb.src = "images/" + dogs + "Thumb.jpg";
+
+				new_thumb.className = "clickable" + (current_index === array_index ? " selected-thumbnail" : "");
+
+				new_thumb.addEventListener("click", () => {
+					set_main_image(array_index);
+				})
+
+				document.querySelector("#thumbnail-area").append(new_thumb);
+
+			})
+
+		}
+
+
+		// Iterates over all thumbnails with the clickable class.
+		// Each thumbnail's class is adjusted based on the current selection: the thumbnail matching the current_index receives the selected-thumbnail class, making it fully opaque, while others are semi-transparent.
+
+
+		const update_thumbnails = (current_index) => {
+
+			const thumbnails = document.querySelectorAll(".clickable");
+
+			thumbnails.forEach((thumb, index) => {
+				return (current_index === index) ? thumb.classList.add("selected-thumbnail") : thumb.classList.remove("selected-thumbnail")
+			})
+
+
+		}
+
+		// When set_major_image() is called with the index of the last item in the image_root_names array, the main image will be set to the last image in the array.
+
+
+		const set_nav_last = () => {
+			set_main_image(image_root_names.length - 1)
+		}
+
+		// // Adds the first image to the array as the main image by calling set_main_image(0).
+
+		const set_nav_first = () => {
+			set_main_image(0)
+		}
+
+		// This function calculates the next and previous image indices, wrapping around the array if needed. 
+		// In order to update the main display, they call set_main_image() with the calculated index.
+		// Depending on current_index, set_nav_next() either wraps to 0 (the first image) or increments current_index if current_index is at the last image.
+		// In set_nav_prev(), current_index is incremented if it is at the first image; otherwise, it is decremented if it is at the last image.
+
+
+		const set_nav_next = () => {
+
+			const next_index = (current_index >= image_root_names.length - 1) ? 0 : current_index + 1;
+
+			set_main_image(next_index);
+
+		}
+
+		const set_nav_prev = () => {
+
+			const prev_index = (current_index == 0) ? current_index = image_root_names.length - 1 : current_index - 1;
+
+			set_main_image(prev_index);
+
+		}
+
+		//  Tells the browser to run first_load() function when the page finishes loading, generating the image gallery.
+
+		window.addEventListener("load", first_load);
+
+	</script>
+
+</body>
+
+</html>
